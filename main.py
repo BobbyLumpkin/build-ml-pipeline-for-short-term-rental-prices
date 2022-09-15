@@ -23,6 +23,8 @@ _steps = [
 # This automatically reads in the configuration
 @hydra.main(config_name='config')
 def go(config: DictConfig):
+    # Set root path
+    root_path = hydra.utils.get_original_cwd()
 
     # Setup the wandb experiment. All runs will be grouped under this name
     os.environ["WANDB_PROJECT"] = config["main"]["project_name"]
@@ -38,7 +40,7 @@ def go(config: DictConfig):
         if "download" in active_steps:
             # Download file and load in W&B
             _ = mlflow.run(
-                f"{config['main']['components_repository']}/get_data",
+                os.path.join(root_path, "components/get_data"),
                 "main",
                 parameters={
                     "sample": config["etl"]["sample"],
